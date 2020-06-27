@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Mindvalley</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <string name="internet_connection_problem">Unable to complete current operation due to problem in internet connection</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="parsing_error">Parsing error</string>
+    <string name="network_error">Network error</string>
+    <string name="server_error">Server error</string>
+    <string name="authentication_failed">Authentication failed</string>
+    <string name="internet_connection">Please check your internet connection</string>
+    <string name="slow_internet">Slow internet connection</string>
+    <string name="channels">Channels</string>
+    <string name="episode">episode</string>
+    <string name="browse_by_categories">Browse by categories</string>
+    <string name="series">series</string>
+    <string name="new_episodes">New Episodes</string>
+
+</resources>
