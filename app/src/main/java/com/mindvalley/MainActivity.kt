@@ -3,8 +3,8 @@ package com.mindvalley
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,12 +18,13 @@ import com.mindvalley.bean.CategoryBean
 import com.mindvalley.bean.ChannelSectionBean
 import com.mindvalley.bean.ChannelsBean
 import com.mindvalley.database.MV_DB_Hepler
+import com.mindvalley.listeners.Click
 import com.mindvalley.ui.GridItemDecoration
+import com.mindvalley.ui.LogHistory
 import com.mindvalley.ui.Utils
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection
 import com.stocktakeonline.backend.ResponseListener
-import com.mindvalley.listeners.Click
 import ui.Config
 
 class MainActivity : AppCompatActivity() {
@@ -38,9 +39,9 @@ class MainActivity : AppCompatActivity() {
     internal var mChannelsBean: ChannelsBean = ChannelsBean()
     internal var nChannelSectionBean: ChannelSectionBean = ChannelSectionBean()
 
-    private lateinit var mRv_newEpisode: RecyclerView
-    private lateinit var mRv_channels: RecyclerView
-    private lateinit var mRv_category: RecyclerView
+    private lateinit var mRvNewEpisode: RecyclerView
+    private lateinit var mRvChannels: RecyclerView
+    private lateinit var mRvCategory: RecyclerView
 
     private lateinit var mSwipeRefresh: SwipyRefreshLayout
 
@@ -49,6 +50,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mCategoriesAdapter: CategoriesAdapter
 
     lateinit var mStoDbHepler: MV_DB_Hepler
+
+    private lateinit var mLogHistory: LogHistory
+
 
     /**
      * Activity life cycle
@@ -63,28 +67,23 @@ class MainActivity : AppCompatActivity() {
         val listCat = mStoDbHepler.getCategories()
         val listCH = mStoDbHepler.getChannel()
 
-        if (listNE == null || listNE.size == 0) {
+        if (listNE.size == 0) {
             getNewEpisodesAPI()
         } else {
             bindNewEpisode()
         }
 
-        if (listCat == null || listCat.size == 0) {
+        if (listCat.size == 0) {
             getCategaryAPI()
         } else {
             bindCategories()
         }
 
-        if (listCH == null || listCH.size == 0) {
-
+        if (listCH.size == 0) {
             getChannelsAPI()
         } else {
             bindChannels()
         }
-
-       /* getCategary_API()
-        getChannels_API()
-        getNewEpisodes_API()*/
 
         mSwipeRefresh.setOnRefreshListener { direction ->
             if (direction == SwipyRefreshLayoutDirection.TOP) {
@@ -104,17 +103,18 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("WrongConstant")
     private fun init() {
 
-        mRv_newEpisode = findViewById(R.id.rv_newEpisode)
-        mRv_newEpisode.setNestedScrollingEnabled(false)
-        mRv_newEpisode.layoutManager = LinearLayoutManager(mActivity, LinearLayout.HORIZONTAL, false)
+        mLogHistory = LogHistory()
+        mRvNewEpisode = findViewById(R.id.rv_newEpisode)
+        mRvNewEpisode.isNestedScrollingEnabled = false
+        mRvNewEpisode.layoutManager = LinearLayoutManager(mActivity, LinearLayout.HORIZONTAL, false)
 
-        mRv_channels = findViewById(R.id.rv_channels)
-        mRv_channels.setNestedScrollingEnabled(false)
-        mRv_channels.layoutManager = LinearLayoutManager(mActivity, LinearLayout.VERTICAL, false)
+        mRvChannels = findViewById(R.id.rv_channels)
+        mRvChannels.isNestedScrollingEnabled = false
+        mRvChannels.layoutManager = LinearLayoutManager(mActivity, LinearLayout.VERTICAL, false)
 
-        mRv_category = findViewById(R.id.rv_category)
-        mRv_category.layoutManager = GridLayoutManager(this, 2)
-        mRv_category.addItemDecoration(GridItemDecoration(10, 2))
+        mRvCategory = findViewById(R.id.rv_category)
+        mRvCategory.layoutManager = GridLayoutManager(this, 2)
+        mRvCategory.addItemDecoration(GridItemDecoration(10, 2))
 
          mSwipeRefresh = findViewById(R.id.swipeRefresh)
         mStoDbHepler = MV_DB_Hepler(mActivity)
@@ -126,6 +126,7 @@ class MainActivity : AppCompatActivity() {
     private fun getNewEpisodesAPI() {
         if (Utils.isOnline(mActivity)) {
             Utils.showProgress(mActivity)
+            mLogHistory.apiCallTest()
             mGetNewEpisodesSectionAPI = GetNewEpisodesSectionAPI(mActivity, responseListener)
             mGetNewEpisodesSectionAPI.execute()
         } else {
@@ -139,6 +140,7 @@ class MainActivity : AppCompatActivity() {
     private fun getChannelsAPI() {
         if (Utils.isOnline(mActivity)) {
             Utils.showProgress(mActivity)
+            mLogHistory.apiCallTest()
             mGetChannelsSectionAPI = GetChannelsSectionAPI(mActivity, responseListener)
             mGetChannelsSectionAPI.execute()
         } else {
@@ -152,6 +154,7 @@ class MainActivity : AppCompatActivity() {
     private fun getCategaryAPI() {
         if (Utils.isOnline(mActivity)) {
             Utils.showProgress(mActivity)
+            mLogHistory.apiCallTest()
             mGetCategarySectionAPI = GetCategarySectionAPI(mActivity, responseListener)
             mGetCategarySectionAPI.execute()
         } else {
@@ -216,7 +219,8 @@ class MainActivity : AppCompatActivity() {
             override fun onclick(position: Int, `object`: Any, text: String) {
             }
         })
-        mRv_category.adapter = mCategoriesAdapter
+        mLogHistory.dataBinding()
+        mRvCategory.adapter = mCategoriesAdapter
     }
 
     /***
@@ -229,7 +233,8 @@ class MainActivity : AppCompatActivity() {
             override fun onclick(position: Int, `object`: Any, text: String) {
             }
         })
-        mRv_channels.adapter = mChannelAdapter
+        mLogHistory.dataBinding()
+        mRvChannels.adapter = mChannelAdapter
     }
 
     /***
@@ -252,8 +257,8 @@ class MainActivity : AppCompatActivity() {
             override fun onclick(position: Int, `object`: Any, text: String) {
             }
         })
-        mRv_newEpisode.adapter = mNewEpisodeAdapter
+        mLogHistory.dataBinding()
+        mRvNewEpisode.adapter = mNewEpisodeAdapter
 
     }
-
 }
