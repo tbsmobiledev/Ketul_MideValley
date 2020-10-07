@@ -260,4 +260,5 @@ class MainActivity : AppCompatActivity() {
         mRvNewEpisode.adapter = mNewEpisodeAdapter
 
     }
+
 }
