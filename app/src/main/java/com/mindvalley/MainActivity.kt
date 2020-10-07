@@ -53,7 +53,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mLogHistory: LogHistory
 
-
     /**
      * Activity life cycle
      */
